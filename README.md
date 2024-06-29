@@ -1,6 +1,4 @@
 <!-- Common Project Tags:
-command-line 
-console-applications 
 desktop-app 
 desktop-application 
 dotnet 
@@ -17,10 +15,16 @@ windows-app
 windows-application 
 windows-applications 
 windows-forms 
-winforms 
+winforms
+steam
+videogame
+videogames
+PC
+game
+games
  -->
 
-# PROJECT NAME
+# Steam ID Converter
 
 ### PROJECT DESCRIPTION
 
@@ -28,22 +32,27 @@ winforms
 
 ## 👋 Introduction
 
-INTRODUCTION TEXT
+Steam ID Converter is a desktop application for Windows, that lets you convert between SteamID32 and SteamID64 identifiers.
+
+Note: This program works for identifiers of an account number. This program does not work to identify the type and the domain (universe) of an Steam ID.
+
+More info about the Steam ID structure: [SteamID wiki](https://developer.valvesoftware.com/wiki/SteamID)
+
+## 🤖 Uses
+
+Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For instance, it allows you to use a savegame from another user in a video game. It can also be employed to set the correct SteamID value in configuration files commonly associated with pirated video game cracks, such as `steam_emu.ini`, `steam_api.ini`, `CPY.ini`, `ds.ini`, `REVOLT.ini` and others.
 
 ## 👌 Features
 
-FEATURES TEXT
+ - Can convert a SteamID32 to SteamID64
+ - Can convert a SteamID64 to SteamID32
+ - Supports hexadecimal values.
 
 ## 🖼️ Screenshots
 
-![screenshot](/Images/screenshot.png)
+![screenshot](/Images/screenshot1.png)
 
-## 🎦 Videos
-
-<!-- Download a recorded video by clicking [here](/Video/video.mp4) -->
-
-<!-- See a recorded video by clicking on the following button:
-[![PROJECT_NAME DEMO VIDEO](Images/demo_video.jpg)](https://www.youtube.com/watch?v=XXXXXXXXX)  -->
+![screenshot](/Images/screenshot2.png)
 
 ## 📝 Requirements
 
@@ -51,27 +60,19 @@ FEATURES TEXT
 
 ## 🤖 Getting Started
 
-Download the latest compilation by clicking [here](https://github.com/ElektroStudios/PROJECT_NAME/releases/latest).
+Download the latest compilation by clicking [here](https://github.com/ElektroStudios/Steam-ID-Converter/releases/latest).
 
 ## 🔄 Change Log
 
 Explore the complete list of changes, bug fixes, and improvements across different releases by clicking [here](/Docs/CHANGELOG.md).
 
-## 🏆 Credits
-
-This work relies on the following resources: 
-
- - [.NET Framework](https://dotnet.microsoft.com/en-us/download/dotnet-framework)
-
 ## ⚠️ Disclaimer:
 
 This Work (the repository and the content provided in) is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the Work or the use or other dealings in the Work.
 
-This Work has no affiliation, approval or endorsement by the author(s) of the third-party libraries used by this Work.
-
 ## 💪 Contributing
 
-Your contribution is highly appreciated!. If you have any ideas, suggestions, or encounter issues, feel free to open an issue by clicking [here](https://github.com/ElektroStudios/PROJECT_NAME/issues/new/choose). 
+Your contribution is highly appreciated!. If you have any ideas, suggestions, or encounter issues, feel free to open an issue by clicking [here](https://github.com/ElektroStudios/Steam-ID-Converter/issues/new/choose). 
 
 Your input helps make this Work better for everyone. Thank you for your support! 🚀
 
