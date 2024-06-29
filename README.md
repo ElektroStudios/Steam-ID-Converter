@@ -38,23 +38,23 @@ Note: This program works for identifiers of an account number. This program does
 
 More info about the Steam ID structure: [SteamID wiki](https://developer.valvesoftware.com/wiki/SteamID)
 
-## 🤖 Uses
-
-Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For instance, it allows you to use a savegame from another user in a video game. It can also be employed to set the correct SteamID value in configuration files commonly associated with pirated video game cracks, such as `steam_emu.ini`, `steam_api.ini`, `CPY.ini`, `ds.ini`, `REVOLT.ini` and others.
-
-## 👌 Features
+## 📋 Features
 
  - Can convert a SteamID32 to SteamID64
  - Can convert a SteamID64 to SteamID32
  - Supports hexadecimal values.
 
+## 👌 Use cases
+
+Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For instance, it allows you to use a savegame from another user in a video game. It can also be employed to set the correct SteamID value in configuration files commonly associated with pirated video game cracks, such as `steam_emu.ini`, `steam_api.ini`, `CPY.ini`, `ds.ini`, `REVOLT.ini` and others.
+
 ## 🖼️ Screenshots
 
-![screenshot1](/Images/screenshot1.png) ![screenshot2](/Images/screenshot2.png)
+![screenshot1](/Images/screenshot1.png)   ![screenshot2](/Images/screenshot2.png)
 
 ## 📝 Requirements
 
-- Microsoft Windows OS.
+- [.NET Desktop Runtime 8](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 ## 🤖 Getting Started
 
