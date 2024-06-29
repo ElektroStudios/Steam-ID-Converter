@@ -26,7 +26,7 @@ games
 
 # Steam ID Converter
 
-### PROJECT DESCRIPTION
+### Simple tool to convert between SteamID32 and SteamID64 (account number) identifiers
 
 ------------------
 
@@ -80,6 +80,8 @@ This work is distributed for educational purposes and without any profit motive.
 
 <br></br>
 <p align="center"><img src="/Images/github_circle.png" height=100></p>
+<p align="center"><img src="/Images/github_circle.png" height=100 alt="GitHub Circle"></p>
+
 <p align="center">__________________</p>
 <h3 align="center">Becoming my sponsor on Github:</h3>
 <p align="center">You can show me your support by clicking <a href="https://github.com/sponsors/ElektroStudios/">here</a>, <br align="center">contributing any amount you prefer, and unlocking rewards!</br></p>
