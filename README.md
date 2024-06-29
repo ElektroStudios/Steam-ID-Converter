@@ -79,9 +79,7 @@ Your input helps make this Work better for everyone. Thank you for your support!
 This work is distributed for educational purposes and without any profit motive. However, if you find value in my efforts and wish to support and motivate my ongoing work, you may consider contributing financially through the following options:
 
 <br></br>
-    <a href="#" onclick="return false;">
-        <img src="/Images/github_circle.png" height="100">
-    </a>
+<p align="center"><img src="/Images/github_circle.png" height=100><a href="https://github.com/sponsors/ElektroStudios/"></a></p>
 <p align="center">__________________</p>
 <h3 align="center">Becoming my sponsor on Github:</h3>
 <p align="center">You can show me your support by clicking <a href="https://github.com/sponsors/ElektroStudios/">here</a>, <br align="center">contributing any amount you prefer, and unlocking rewards!</br></p>
