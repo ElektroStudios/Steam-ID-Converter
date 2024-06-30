@@ -13,6 +13,7 @@ Option Infer Off
 
 #Region " Imports "
 
+Imports System.ComponentModel
 Imports System.Globalization
 
 Imports DevCase.ThirdParty.Steam
@@ -28,7 +29,19 @@ Public Class Form1
     ''' <summary>
     ''' The URL that points to the GitHub repository of this application.
     ''' </summary>
-    Const GitHubUrl As String = "https://github.com/ElektroStudios/Steam-ID-Converter"
+    Private Const GitHubUrl As String = "https://github.com/ElektroStudios/Steam-ID-Converter"
+
+    ''' <summary>
+    ''' A list of predefined Steam ID values.
+    ''' </summary>
+    Private PredefinedValues As New BindingList(Of KeyValuePair(Of String, String)) From {
+        New KeyValuePair(Of String, String)("NONE", ""),
+        New KeyValuePair(Of String, String)("12345", "12345"),
+        New KeyValuePair(Of String, String)("12345678", "12345678"),
+        New KeyValuePair(Of String, String)("CODEX (CDX)", "1638"),
+        New KeyValuePair(Of String, String)("RELOADED (RLD!)", "4919"),
+        New KeyValuePair(Of String, String)("TENOKE", "4660")
+    }
 
 #End Region
 
@@ -42,7 +55,12 @@ Public Class Form1
     ''' <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = $"{My.Application.Info.Title} v{My.Application.Info.Version.Major}.{My.Application.Info.Version.Minor}"
+
+        Me.ComboBox_Predefined.DataSource = Me.PredefinedValues
+        Me.ComboBox_Predefined.DisplayMember = "Key"
+        Me.ComboBox_Predefined.ValueMember = "Value"
         Me.ComboBox_Predefined.SelectedIndex = 0
+
         Me.SetVisualTheme()
     End Sub
 
@@ -126,6 +144,23 @@ Public Class Form1
             Me.ErrorProvider1.SetError(lnkLbl, ex.Message)
 
         End Try
+
+    End Sub
+
+    ''' <summary>
+    ''' Handles the SelectedIndexChanged event of the ComboBox_Predefined control.
+    ''' </summary>
+    ''' 
+    ''' <param name="sender">The source of the event.</param>
+    ''' <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+    Private Sub ComboBox_Predefined_SelectedIndexChanged(sender As Object, e As EventArgs) _
+    Handles ComboBox_Predefined.SelectedIndexChanged
+
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+        Dim selectedPair As KeyValuePair(Of String, String) = Me.PredefinedValues.Item(cb.SelectedIndex)
+
+        Me.TextBox_Manual.Text = selectedPair.Value
+        Me.TextBox_Manual.Enabled = String.IsNullOrEmpty(selectedPair.Value)
 
     End Sub
 
@@ -287,36 +322,6 @@ Public Class Form1
             Me.TextBox_SteamId64Num.BorderStyle = BorderStyle.Fixed3D
 
         End If
-
-    End Sub
-
-    Private Sub ComboBox_Predefined_SelectedIndexChanged(sender As Object, e As EventArgs) _
-    Handles ComboBox_Predefined.SelectedIndexChanged
-
-        Me.TextBox_Manual.Enabled = False
-
-        Dim cb As ComboBox = DirectCast(sender, ComboBox)
-        Dim value As String = cb.Text
-
-        Select Case value.ToLower()
-
-            Case "none"
-                Me.TextBox_Manual.Enabled = True
-                Me.TextBox_Manual.Clear()
-
-            Case "12345"
-                Me.TextBox_Manual.Text = "12345"
-
-            Case "12345678"
-                Me.TextBox_Manual.Text = "12345678"
-
-            Case "codex (cdx)"
-                Me.TextBox_Manual.Text = "1638"
-
-            Case "reloaded (rld)"
-                Me.TextBox_Manual.Text = "4919"
-
-        End Select
 
     End Sub
 

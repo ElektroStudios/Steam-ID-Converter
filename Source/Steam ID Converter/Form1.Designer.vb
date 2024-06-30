@@ -202,7 +202,7 @@ Partial Class Form1
         ' 
         Me.ComboBox_Predefined.DropDownStyle = ComboBoxStyle.DropDownList
         Me.ComboBox_Predefined.FormattingEnabled = True
-        Me.ComboBox_Predefined.Items.AddRange(New Object() {"NONE", "12345", "12345678", "CODEX (CDX)", "RELOADED (RLD)"})
+        Me.ComboBox_Predefined.Items.AddRange(New Object() {"NONE"})
         Me.ComboBox_Predefined.Location = New Point(100, 57)
         Me.ComboBox_Predefined.Name = "ComboBox_Predefined"
         Me.ComboBox_Predefined.Size = New Size(172, 29)
