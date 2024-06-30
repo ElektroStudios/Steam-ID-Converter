@@ -40,8 +40,9 @@ More info about the Steam ID structure: [SteamID wiki](https://developer.valveso
 
 ## 📋 Features
 
- - Can convert a SteamID32 to SteamID64
- - Can convert a SteamID64 to SteamID32
+ - Automatically detects the format of the SteamID value and then performs the conversion.
+ - Can convert a SteamID32 to SteamID64.
+ - Can convert a SteamID64 to SteamID32.
  - Supports hexadecimal values.
 
 ## 👌 Use cases
