@@ -42,6 +42,7 @@ Public Class Form1
     ''' <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = $"{My.Application.Info.Title} v{My.Application.Info.Version.Major}.{My.Application.Info.Version.Minor}"
+        Me.ComboBox_Predefined.SelectedIndex = 0
         Me.SetVisualTheme()
     End Sub
 
@@ -53,8 +54,8 @@ Public Class Form1
     ''' <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
         With Me.ErrorProvider1
-            .SetIconAlignment(Me.TextBox_InputValue, ErrorIconAlignment.MiddleRight)
-            .SetIconPadding(Me.TextBox_InputValue, 2)
+            .SetIconAlignment(Me.TextBox_Manual, ErrorIconAlignment.MiddleRight)
+            .SetIconPadding(Me.TextBox_Manual, 3)
 
             .SetIconAlignment(Me.LinkLabel_GitHub, ErrorIconAlignment.BottomRight)
             .SetIconPadding(Me.LinkLabel_GitHub, 2)
@@ -68,7 +69,7 @@ Public Class Form1
     ''' <param name="sender">The source of the event.</param>
     ''' <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     Private Sub TextBox_InputValue_TextChanged(sender As Object, e As EventArgs) _
-    Handles TextBox_InputValue.TextChanged
+    Handles TextBox_Manual.TextChanged
 
         Dim tb As System.Windows.Forms.TextBox = DirectCast(sender, System.Windows.Forms.TextBox)
         Me.ErrorProvider1.SetError(tb, Nothing)
@@ -159,8 +160,8 @@ Public Class Form1
             numericParseResult = ULong.TryParse(value, CultureInfo.InvariantCulture, numericValue)
         End If
 
-        If Not numericParseResult Then
-            Me.ErrorProvider1.SetError(Me.TextBox_InputValue, "Cannot parse input value.")
+        If Not numericParseResult OrElse numericValue = 0 Then
+            Me.ErrorProvider1.SetError(Me.TextBox_Manual, "Cannot parse input value.")
             Me.ClearTextboxes()
 
         Else
@@ -179,7 +180,7 @@ Public Class Form1
                 Me.TextBox_SteamId64Hex.Text = $"0x{steamId64Num:X2}"
 
             Catch ex As Exception
-                Me.ErrorProvider1.SetError(Me.TextBox_InputValue, "Cannot parse input value.")
+                Me.ErrorProvider1.SetError(Me.TextBox_Manual, "Cannot parse input value.")
                 Me.ClearTextboxes()
 
             End Try
@@ -215,9 +216,13 @@ Public Class Form1
             Me.BackColor = formBackColor
             Me.ForeColor = formForeColor
 
+            Me.GroupBox_InputValue.ForeColor = groupBoxForeColor
             Me.GroupBox_SteamId64.ForeColor = groupBoxForeColor
-
             Me.GroupBox_SteamId32.ForeColor = groupBoxForeColor
+
+            Me.ComboBox_Predefined.BackColor = Color.FromArgb(255, 37, 37, 38)
+            Me.ComboBox_Predefined.ForeColor = textboxForeColor
+            Me.ComboBox_Predefined.FlatStyle = FlatStyle.Flat
 
             Me.LinkLabel_GitHub.LinkColor = linkLabelForeColor
 
@@ -225,9 +230,9 @@ Public Class Form1
             Me.Button_TooggleDarkTheme.FlatAppearance.BorderSize = 0
             Me.Button_TooggleDarkTheme.FlatAppearance.MouseOverBackColor = SystemColors.ControlDarkDark
 
-            Me.TextBox_InputValue.BackColor = textboxBackColor
-            Me.TextBox_InputValue.ForeColor = textboxForeColor
-            Me.TextBox_InputValue.BorderStyle = BorderStyle.FixedSingle
+            Me.TextBox_Manual.BackColor = textboxBackColor
+            Me.TextBox_Manual.ForeColor = textboxForeColor
+            Me.TextBox_Manual.BorderStyle = BorderStyle.FixedSingle
 
             Me.TextBox_SteamId32Hex.BackColor = textboxBackColor
             Me.TextBox_SteamId32Hex.ForeColor = textboxForeColor
@@ -249,17 +254,21 @@ Public Class Form1
             Me.BackColor = Form.DefaultBackColor
             Me.ForeColor = Form.DefaultForeColor
 
+            Me.GroupBox_InputValue.ForeColor = GroupBox.DefaultForeColor
             Me.GroupBox_SteamId64.ForeColor = GroupBox.DefaultForeColor
-
             Me.GroupBox_SteamId32.ForeColor = GroupBox.DefaultForeColor
+
+            Me.ComboBox_Predefined.BackColor = ComboBox.DefaultBackColor
+            Me.ComboBox_Predefined.ForeColor = ComboBox.DefaultForeColor
+            Me.ComboBox_Predefined.FlatStyle = FlatStyle.Standard
 
             Me.LinkLabel_GitHub.LinkColor = Color.FromArgb(255, 0, 0, 255)
 
             Me.Button_TooggleDarkTheme.FlatStyle = FlatStyle.Standard
 
-            Me.TextBox_InputValue.BackColor = TextBox.DefaultBackColor
-            Me.TextBox_InputValue.ForeColor = TextBox.DefaultForeColor
-            Me.TextBox_InputValue.BorderStyle = BorderStyle.Fixed3D
+            Me.TextBox_Manual.BackColor = TextBox.DefaultBackColor
+            Me.TextBox_Manual.ForeColor = TextBox.DefaultForeColor
+            Me.TextBox_Manual.BorderStyle = BorderStyle.Fixed3D
 
             Me.TextBox_SteamId32Hex.BackColor = TextBox.DefaultBackColor
             Me.TextBox_SteamId32Hex.ForeColor = TextBox.DefaultForeColor
@@ -278,6 +287,36 @@ Public Class Form1
             Me.TextBox_SteamId64Num.BorderStyle = BorderStyle.Fixed3D
 
         End If
+
+    End Sub
+
+    Private Sub ComboBox_Predefined_SelectedIndexChanged(sender As Object, e As EventArgs) _
+    Handles ComboBox_Predefined.SelectedIndexChanged
+
+        Me.TextBox_Manual.Enabled = False
+
+        Dim cb As ComboBox = DirectCast(sender, ComboBox)
+        Dim value As String = cb.Text
+
+        Select Case value.ToLower()
+
+            Case "none"
+                Me.TextBox_Manual.Enabled = True
+                Me.TextBox_Manual.Clear()
+
+            Case "12345"
+                Me.TextBox_Manual.Text = "12345"
+
+            Case "12345678"
+                Me.TextBox_Manual.Text = "12345678"
+
+            Case "codex (cdx)"
+                Me.TextBox_Manual.Text = "1638"
+
+            Case "reloaded (rld)"
+                Me.TextBox_Manual.Text = "4919"
+
+        End Select
 
     End Sub
 

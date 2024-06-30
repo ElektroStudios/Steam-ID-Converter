@@ -13,6 +13,7 @@
     <Description>Simple tool to convert between SteamID32 and SteamID64 (account number) identifiers</Description>
     <Copyright>Copyright © ElektroStudios 2024</Copyright>
     <PackageProjectUrl>https://github.com/ElektroStudios/Steam-ID-Converter</PackageProjectUrl>
+    <Version>1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
