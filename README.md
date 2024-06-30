@@ -50,7 +50,7 @@ Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For 
 
 ## 🖼️ Screenshots
 
-![screenshot1](/Images/screenshot1.png)   ![screenshot2](/Images/screenshot2.png)
+![screenshot1](/Images/screenshot01.png)   ![screenshot2](/Images/screenshot02.png)
 
 ## 📝 Requirements
 
