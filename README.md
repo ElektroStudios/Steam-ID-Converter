@@ -47,7 +47,7 @@ More info about the Steam ID structure: [SteamID wiki](https://developer.valveso
 
 ## 👌 Use cases
 
-Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For instance, it allows you to use a savegame from another user in a video game. It can also be employed to set the correct SteamID value in configuration files commonly associated with pirated video game cracks, such as `codex.ini`, `CPY.ini`, `ds.ini`, `REVOLT.ini`, `steam_api.ini`, `steam_emu.ini` and others, which expects to specify an SteamID32 or SteamID64 in the right format.
+Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For instance, it allows you to use a savegame from another user in a video game. It can also be employed to set the correct SteamID value in configuration files commonly associated with pirated video game cracks, such as `codex.ini`, `CPY.ini`, `ds.ini`, `REVOLT.ini`, `steam_api.ini`, `steam_emu.ini`, `tenoke.ini` and others, which expects to specify an SteamID32 or SteamID64 in the right format.
 
 ## 🖼️ Screenshots
 
