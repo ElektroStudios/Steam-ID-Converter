@@ -1,8 +1,4 @@
-﻿' ***********************************************************************
-' Author   : ElektroStudios
-' Modified : 29-June-2024
-' ***********************************************************************
-
+﻿
 #Region " Option Statements "
 
 Option Strict On
@@ -36,10 +32,9 @@ Public Class Form1
     ''' </summary>
     Private PredefinedValues As New BindingList(Of KeyValuePair(Of String, String)) From {
         New KeyValuePair(Of String, String)("NONE", ""),
-        New KeyValuePair(Of String, String)("12345", "12345"),
-        New KeyValuePair(Of String, String)("12345678", "12345678"),
         New KeyValuePair(Of String, String)("CODEX (CDX)", "1638"),
-        New KeyValuePair(Of String, String)("RELOADED (RLD!)", "4919"),
+        New KeyValuePair(Of String, String)("DARKSiDERS (DS)", "3256440348"),
+        New KeyValuePair(Of String, String)("RELOADED (RLD)", "4919"),
         New KeyValuePair(Of String, String)("TENOKE", "4660")
     }
 
@@ -89,7 +84,7 @@ Public Class Form1
     Private Sub TextBox_InputValue_TextChanged(sender As Object, e As EventArgs) _
     Handles TextBox_Manual.TextChanged
 
-        Dim tb As System.Windows.Forms.TextBox = DirectCast(sender, System.Windows.Forms.TextBox)
+        Dim tb As TextBox = DirectCast(sender, TextBox)
         Me.ErrorProvider1.SetError(tb, Nothing)
         Me.ParseInputValue(tb.Text)
     End Sub
@@ -105,7 +100,7 @@ Public Class Form1
     Handles TextBox_SteamId32Num.TextChanged, TextBox_SteamId32Hex.TextChanged,
             TextBox_SteamId64Num.TextChanged, TextBox_SteamId64Hex.TextChanged
 
-        Dim tb As System.Windows.Forms.TextBox = DirectCast(sender, System.Windows.Forms.TextBox)
+        Dim tb As TextBox = DirectCast(sender, TextBox)
         tb.Enabled = Not String.IsNullOrEmpty(tb.Text)
     End Sub
 
