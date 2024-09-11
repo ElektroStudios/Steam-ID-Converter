@@ -33,7 +33,6 @@ Public Class Form1
     Private PredefinedValues As New BindingList(Of KeyValuePair(Of String, String)) From {
         New KeyValuePair(Of String, String)("NONE", ""),
         New KeyValuePair(Of String, String)("CODEX (CDX)", "1638"),
-        New KeyValuePair(Of String, String)("DARKSiDERS (DS)", "3256440348"),
         New KeyValuePair(Of String, String)("RELOADED (RLD)", "4919"),
         New KeyValuePair(Of String, String)("TENOKE", "4660")
     }
