@@ -51,7 +51,9 @@ Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For 
 
 ## 🖼️ Screenshots
 
-![screenshot1](/Images/screenshot01.png)   ![screenshot2](/Images/screenshot02.png)
+![screenshot1](/Images/screenshot_01.png)   ![screenshot2](/Images/screenshot_02.png)
+
+![screenshot1](/Images/screenshot_03.png)   ![screenshot2](/Images/screenshot_04.png)
 
 ## 📝 Requirements
 
