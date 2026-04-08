@@ -1,6 +1,6 @@
 ﻿' ***********************************************************************
 ' Author   : ElektroStudios
-' Modified : 29-June-2024
+' Modified : 08-April-2026
 ' ***********************************************************************
 
 #Region " Option Statements "
@@ -15,7 +15,7 @@ Option Infer Off
 
 ' ReSharper disable once CheckNamespace
 
-Namespace DevCase.ThirdParty.Steam
+Namespace SteamIDConverter
 
     ''' <summary>
     ''' Contains interoperability features for Steam client.
@@ -79,8 +79,8 @@ Namespace DevCase.ThirdParty.Steam
         <DebuggerStepThrough>
         Public Shared Function ConvertSteamID64ToSteamID32(steamID64 As ULong) As UInteger
 
-            Return CUInt(steamID64 - 76561197960265728L)
-
+            Const value As Long = 76561197960265728L
+            Return CUInt(steamID64 - value)
         End Function
 
         ''' <summary>
@@ -115,8 +115,8 @@ Namespace DevCase.ThirdParty.Steam
         <DebuggerStepThrough>
         Public Shared Function ConvertSteamID32ToSteamID64(steamID32 As UInteger) As ULong
 
-            Return 76561197960265728UL + steamID32
-
+            Const value As ULong = 76561197960265728UL
+            Return value + steamID32
         End Function
 
 #End Region
