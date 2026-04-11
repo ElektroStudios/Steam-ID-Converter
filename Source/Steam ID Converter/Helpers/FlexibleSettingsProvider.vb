@@ -29,7 +29,7 @@ Imports System.Text
 
 #Region " FlexibleSettingsProvider "
 
-Namespace SteamIDConverter
+Namespace SteamIDConverter.Helpers
 
     ''' <summary>
     ''' A settings provider that allows to store the application's user configuration file 

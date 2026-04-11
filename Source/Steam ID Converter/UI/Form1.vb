@@ -18,13 +18,16 @@ Imports System.Globalization
 Imports System.Runtime.InteropServices
 
 Imports SteamIDConverter
+Imports SteamIDConverter.Helpers
 Imports SteamIDConverter.Win32
 
 #End Region
 
 #Region " Form1 "
 
+#Disable Warning CA1050 ' Declare types in namespaces
 Public NotInheritable Class Form1 : Inherits Form
+#Enable Warning CA1050 ' Declare types in namespaces
 
 #Region " Fields "
 
@@ -41,9 +44,10 @@ Public NotInheritable Class Form1 : Inherits Form
     }
 
     ''' <summary>
-    ''' Runtime border painter attached to <see cref="Form1.ComboBox_Preset"/>.
+    ''' A dictionary that maps each relevant control with a <see cref="ControlBorderPainter"/> instance
+    ''' responsible for rendering its custom border color.
     ''' </summary>
-    Private comboBoxPresetBorderPainter As ComboBoxBorderPainter
+    Private ControlBorderPainterControls As New Dictionary(Of Control, ControlBorderPainter)
 
 #End Region
 
@@ -66,13 +70,18 @@ Public NotInheritable Class Form1 : Inherits Form
         Me.ComboBox_Preset.ValueMember = "Value"
         Me.ComboBox_Preset.SelectedIndex = 0
 
-        For Each gb As GroupBox In {
-            Me.GroupBox_SteamIdInput,
-            Me.GroupBox_SteamId32,
-            Me.GroupBox_SteamId64
+        Me.ControlBorderPainterControls = New Dictionary(Of Control, ControlBorderPainter) From {
+            {Me.GroupBox_SteamIdInput, Nothing},
+            {Me.GroupBox_SteamId32, Nothing},
+            {Me.GroupBox_SteamId64, Nothing},
+            {Me.Button_TooggleDarkTheme, Nothing},
+            {Me.ComboBox_Preset, Nothing},
+            {Me.TextBox_CustomID, Nothing},
+            {Me.TextBox_SteamId32Dec, Nothing},
+            {Me.TextBox_SteamId32Hex, Nothing},
+            {Me.TextBox_SteamId64Dec, Nothing},
+            {Me.TextBox_SteamId64Hex, Nothing}
         }
-            AddHandler gb.Paint, AddressOf Me.GroupBox_PaintCustomBorder
-        Next
 
         Me.SetVisualTheme()
     End Sub
@@ -180,131 +189,10 @@ Public NotInheritable Class Form1 : Inherits Form
 
         Me.TextBox_CustomID.Text = valueToParse
         Me.TextBox_CustomID.Enabled = String.IsNullOrEmpty(valueToParse)
-    End Sub
 
-    ''' <summary>
-    ''' Custom paint handler that draws a <see cref="GroupBox"/> with a 
-    ''' configurable border color, instead of the default system theme color.
-    ''' </summary>
-    ''' 
-    ''' <param name="sender">
-    ''' The <see cref="GroupBox"/> being painted.
-    ''' </param>
-    ''' 
-    ''' <param name="e">
-    ''' The <see cref="PaintEventArgs"/> instance containing the event data.
-    ''' </param>
-    Private Sub GroupBox_PaintCustomBorder(sender As Object, e As PaintEventArgs)
-
-        Dim gb As GroupBox = DirectCast(sender, GroupBox)
-        Dim g As Graphics = e.Graphics
-
-        Dim borderColor As Color =
-            If(My.Settings.UseDarkTheme,
-               Color.FromArgb(255, 60, 68, 90),
-               Color.Gray)
-
-        Dim titleText As String = If(gb.Text, String.Empty)
-        Dim titleFont As Font = gb.Font
-        Dim titleSize As SizeF = g.MeasureString(titleText, titleFont)
-
-        Dim titleHeightInt As Integer = CInt(Math.Ceiling(CDbl(titleSize.Height)))
-        Dim titleWidthInt As Integer = CInt(Math.Ceiling(CDbl(titleSize.Width)))
-        Dim titleHalfHeight As Integer = titleHeightInt \ 2
-
-        ' Erase the entire control surface with its BackColor.
-        Using backBrush As New SolidBrush(gb.BackColor)
-            g.FillRectangle(backBrush, gb.ClientRectangle)
-        End Using
-
-        ' Draw the custom border rectangle.
-        Dim borderRect As New Rectangle(0, titleHalfHeight, gb.Width - 1, gb.Height - titleHalfHeight - 1)
-
-        Using borderPen As New Pen(borderColor, 1.0F)
-            g.DrawRectangle(borderPen, borderRect)
-        End Using
-
-        ' Erase the line section behind the title and draw the title text.
-        If Not String.IsNullOrEmpty(titleText) Then
-
-            Dim titleBackRect As New Rectangle(8, 0, titleWidthInt, titleHeightInt)
-            Using titleBackBrush As New SolidBrush(gb.BackColor)
-                g.FillRectangle(titleBackBrush, titleBackRect)
-            End Using
-
-            Using titleBrush As New SolidBrush(gb.ForeColor)
-                g.DrawString(titleText, titleFont, titleBrush, 8.0F, 0.0F)
-            End Using
-
+        If String.IsNullOrWhiteSpace(valueToParse) Then
+            Me.TextBox_CustomID.Focus()
         End If
-
-    End Sub
-
-    ''' <summary>
-    ''' Custom draw handler for <see cref="ComboBox_Preset"/> that paints each item
-    ''' (including the selected value shown in the closed combo) with theme colors.
-    ''' </summary>
-    ''' 
-    ''' <param name="sender">
-    ''' The <see cref="ComboBox"/> being drawn.
-    ''' </param>
-    ''' 
-    ''' <param name="e">
-    ''' The <see cref="DrawItemEventArgs"/> instance containing the event data.
-    ''' </param>
-    Private Sub ComboBox_Preset_DrawItem(sender As Object, e As DrawItemEventArgs)
-
-        Dim cb As ComboBox = DirectCast(sender, ComboBox)
-
-        ' Decide colors based on current theme.
-        Dim itemBackColor As Color
-        Dim itemForeColor As Color
-        Dim selectedBackColor As Color
-
-        If My.Settings.UseDarkTheme Then
-            itemBackColor = Color.FromArgb(255, 39, 44, 60)
-            itemForeColor = Color.FromArgb(255, 220, 223, 235)
-            selectedBackColor = Color.FromArgb(255, 60, 68, 90)
-        Else
-            itemBackColor = SystemColors.Window
-            itemForeColor = SystemColors.ControlText
-            selectedBackColor = SystemColors.Highlight
-        End If
-
-        ' Determine whether this item is the highlighted one in the dropdown list.
-        Dim isSelected As Boolean = (e.State And DrawItemState.Selected) = DrawItemState.Selected
-        Dim backColor As Color = If(isSelected, selectedBackColor, itemBackColor)
-
-        ' Fill the item background.
-        Using backBrush As New SolidBrush(backColor)
-            e.Graphics.FillRectangle(backBrush, e.Bounds)
-        End Using
-
-        ' Resolve the display text for the item.
-        Dim itemText As String = String.Empty
-        If e.Index >= 0 AndAlso e.Index < cb.Items.Count Then
-            Dim rawItem As Object = cb.Items.Item(e.Index)
-            If TypeOf rawItem Is KeyValuePair(Of String, String) Then
-                Dim pair As KeyValuePair(Of String, String) = DirectCast(rawItem, KeyValuePair(Of String, String))
-                itemText = pair.Key
-            Else
-                itemText = If(rawItem?.ToString(), String.Empty)
-            End If
-        End If
-
-        ' Draw the item text with a small left padding.
-        Using foreBrush As New SolidBrush(itemForeColor)
-            Dim textRect As New Rectangle(
-            e.Bounds.X + 3,
-            e.Bounds.Y + 1,
-            e.Bounds.Width - 3,
-            e.Bounds.Height - 1)
-            e.Graphics.DrawString(itemText, cb.Font, foreBrush, textRect)
-        End Using
-
-        ' Draw the focus rectangle if needed.
-        e.DrawFocusRectangle()
-
     End Sub
 
 #End Region
@@ -400,11 +288,11 @@ Public NotInheritable Class Form1 : Inherits Form
 
             Me.ComboBox_Preset.BackColor = textboxBackColor
             Me.ComboBox_Preset.ForeColor = textboxForeColor
-            Me.ComboBox_Preset.DrawMode = DrawMode.OwnerDrawFixed
             Me.ComboBox_Preset.FlatStyle = FlatStyle.Flat
+            ' Toogling DropDownStyle value forces to recreate the ComboBox handle
+            ' to properly reflect the new BackColor.
+            Me.ComboBox_Preset.DropDownStyle = ComboBoxStyle.Simple
             Me.ComboBox_Preset.DropDownStyle = ComboBoxStyle.DropDownList
-            RemoveHandler Me.ComboBox_Preset.DrawItem, AddressOf Me.ComboBox_Preset_DrawItem
-            AddHandler Me.ComboBox_Preset.DrawItem, AddressOf Me.ComboBox_Preset_DrawItem
 
             Me.LinkLabel_GitHub.LinkColor = linkLabelForeColor
 
@@ -426,7 +314,12 @@ Public NotInheritable Class Form1 : Inherits Form
                 tb.BorderStyle = BorderStyle.FixedSingle
             Next
 
-            Me.comboBoxPresetBorderPainter = New ComboBoxBorderPainter(Me.ComboBox_Preset, SystemColors.ControlDarkDark)
+            For Each ctrl As Control In Me.ControlBorderPainterControls.Keys
+                Dim painter As ControlBorderPainter = Me.ControlBorderPainterControls(ctrl)
+                painter?.Dispose()
+
+                Me.ControlBorderPainterControls(ctrl) = New ControlBorderPainter(ctrl, Color.FromArgb(65, 65, 65), borderThickness:=1)
+            Next
 
             Me.SetDarkTitleBar(enabled:=True)
         Else
@@ -440,8 +333,6 @@ Public NotInheritable Class Form1 : Inherits Form
             Me.ComboBox_Preset.BackColor = ComboBox.DefaultBackColor
             Me.ComboBox_Preset.ForeColor = ComboBox.DefaultForeColor
             Me.ComboBox_Preset.FlatStyle = FlatStyle.Standard
-            Me.ComboBox_Preset.DrawMode = DrawMode.Normal
-            RemoveHandler Me.ComboBox_Preset.DrawItem, AddressOf Me.ComboBox_Preset_DrawItem
 
             Me.LinkLabel_GitHub.LinkColor = Color.FromArgb(255, 0, 0, 255)
 
@@ -463,7 +354,10 @@ Public NotInheritable Class Form1 : Inherits Form
                 tb.BorderStyle = BorderStyle.Fixed3D
             Next
 
-            Me.comboBoxPresetBorderPainter = Nothing
+            For Each ctrl As Control In Me.ControlBorderPainterControls.Keys
+                Dim painter As ControlBorderPainter = Me.ControlBorderPainterControls(ctrl)
+                painter?.Dispose()
+            Next
 
             Me.SetDarkTitleBar(enabled:=False)
         End If

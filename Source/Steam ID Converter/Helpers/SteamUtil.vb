@@ -15,7 +15,7 @@ Option Infer Off
 
 ' ReSharper disable once CheckNamespace
 
-Namespace SteamIDConverter
+Namespace SteamIDConverter.Helpers
 
     ''' <summary>
     ''' Contains interoperability features for Steam client.

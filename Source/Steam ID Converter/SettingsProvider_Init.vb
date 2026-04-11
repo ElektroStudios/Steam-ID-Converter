@@ -13,7 +13,7 @@ Option Infer Off
 
 #Region " Imports "
 
-Imports SteamIDConverter
+Imports SteamIDConverter.Helpers
 
 #End Region
 

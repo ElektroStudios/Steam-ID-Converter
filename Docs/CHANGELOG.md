@@ -1,7 +1,12 @@
 # Steam ID Converter Change Log 📋
 
-## v1.3.0 *(current)* 🆕
+## v1.3.1 *(current)* 🆕
+#### 🌟 Improvements:
+- Renamed the preset "Mr. Goldberg" to "DenuvOwO Repacks" for clarity and precision.
+- The "Custom ID" textbox now automatically receives focus when the preset is set to None.
+- Reduced visual glitches related to control border rendering when the visual theme is set to Dark.
 
+## v1.3.0 🔄
 #### 🌟 Improvements:
 - **User Interface:** Repositioned controls, improved text descriptions, and fixed color inconsistencies.
 - **Source-code:** Various refactors and micro-optimizations.
