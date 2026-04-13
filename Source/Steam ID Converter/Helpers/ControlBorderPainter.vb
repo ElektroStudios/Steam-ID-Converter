@@ -142,7 +142,11 @@ Namespace SteamIDConverter.Helpers
                 If m.Msg = Constants.WM_ERASEBKGND AndAlso Me.children.Count > 0 Then
                     Dim hdc As IntPtr = m.WParam
                     For Each child As Control In Me.children
-                        If child.IsHandleCreated Then
+                        If child IsNot Nothing AndAlso
+                           child.IsHandleCreated AndAlso
+                           child.Visible AndAlso
+                           child.Size <> Size.Empty Then
+
                             Dim r As Rectangle = child.Bounds
                             ' Inflate by 1 pixel to cover the border area
                             ' that sits just outside the control's client rect.

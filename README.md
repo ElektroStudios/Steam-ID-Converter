@@ -26,28 +26,30 @@ games
 
 # Steam ID Converter
 
-### Simple tool to convert between SteamID32 and SteamID64 (account number) identifiers
+### Utility for converting Steam account identifiers between their 32-bit and 64-bit formats.
 
 ------------------
 
 ## 👋 Introduction
 
-Steam ID Converter is a desktop application for Windows, that lets you convert between SteamID32 and SteamID64 identifiers.
+Steam ID Converter is a Windows desktop application that allows you to convert between SteamID32 and SteamID64 identifiers.
 
-Note: This program works for identifiers of an account number. This program does not work to identify the type and the domain (universe) of an Steam ID.
+Note: This tool supports only the account number portion of a Steam ID. It does not identify the Steam ID type or its universe (domain).
 
 More info about the Steam ID structure: [SteamID wiki](https://developer.valvesoftware.com/wiki/SteamID)
 
 ## 📋 Features
 
- - Automatically detects the format of the input SteamID value and then performs the conversion.
+ - Automatically detects the format of the input Steam ID and performs the appropriate conversion.
  - Can convert a SteamID32 to SteamID64.
  - Can convert a SteamID64 to SteamID32.
- - Supports hexadecimal values.
+ - Supports both decimal and hexadecimal Steam ID representations.
 
 ## 👌 Use cases
 
-Getting a SteamID32 or SteamID64 in the correct format can be quite useful. For instance, it allows you to use a savegame from another user in a video game. It can also be employed to set the correct SteamID value in configuration files commonly associated with pirated video game cracks, such as `codex.ini`, `CPY.ini`, `ds.ini`, `REVOLT.ini`, `steam_api.ini`, `steam_emu.ini`, `tenoke.ini` and others, which expects to specify an SteamID32 or SteamID64 in the right format.
+Obtaining a SteamID32 or SteamID64 in the correct format can be useful in several scenarios.
+
+For example, it allows you to adapt save files created by another user (a different Steam ID than yours) so they can be used under your own account. It can also be helpful when editing configuration files or tools that require a valid Steam account identifier in the correct format, like configuration files ommonly associated with pirated video game cracks, such as `codex.ini`, `CPY.ini`, `ds.ini`, `REVOLT.ini`, `steam_api.ini`, `steam_emu.ini`, `tenoke.ini` and others, which expects to specify an SteamID32 or SteamID64 in the appropriate format.
 
 ## 🖼️ Screenshots
 

@@ -1,6 +1,6 @@
 ﻿' ***********************************************************************
 ' Author   : ElektroStudios
-' Modified : 08-April-2026
+' Modified : 13-April-2026
 ' ***********************************************************************
 
 #Region " Option Statements "
@@ -17,7 +17,6 @@ Imports System.ComponentModel
 Imports System.Globalization
 Imports System.Runtime.InteropServices
 
-Imports SteamIDConverter
 Imports SteamIDConverter.Helpers
 Imports SteamIDConverter.Win32
 
@@ -48,6 +47,12 @@ Public NotInheritable Class Form1 : Inherits Form
     ''' responsible for rendering its custom border color.
     ''' </summary>
     Private ControlBorderPainterControls As New Dictionary(Of Control, ControlBorderPainter)
+
+    ''' <summary>
+    ''' A flag to indicate whether the form load process has completed.
+    ''' Used to prevent certain actions from being performed before the form is fully initialized.
+    ''' </summary>
+    Private formLoadCompleted As Boolean = False
 
 #End Region
 
@@ -84,6 +89,12 @@ Public NotInheritable Class Form1 : Inherits Form
         }
 
         Me.SetVisualTheme()
+
+        Me.BeginInvoke(Sub()
+                           ' Toogling button visibility forces proper border color update.
+                           Me.Button_TooggleDarkTheme.Visible = False
+                           Me.Button_TooggleDarkTheme.Visible = True
+                       End Sub)
     End Sub
 
     ''' <summary>
@@ -93,6 +104,7 @@ Public NotInheritable Class Form1 : Inherits Form
     ''' <param name="sender">The source of the event.</param>
     ''' <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     Private Sub Form1_Shown(sender As Object, e As EventArgs) Handles MyBase.Shown
+
         With Me.ErrorProvider1
             .SetIconAlignment(Me.TextBox_CustomID, ErrorIconAlignment.MiddleLeft)
             .SetIconPadding(Me.TextBox_CustomID, 3)
@@ -100,6 +112,8 @@ Public NotInheritable Class Form1 : Inherits Form
             .SetIconAlignment(Me.LinkLabel_GitHub, ErrorIconAlignment.BottomRight)
             .SetIconPadding(Me.LinkLabel_GitHub, 2)
         End With
+
+        Me.formLoadCompleted = True
     End Sub
 
     ''' <summary>
@@ -112,8 +126,11 @@ Public NotInheritable Class Form1 : Inherits Form
     Handles TextBox_CustomID.TextChanged
 
         Dim tb As TextBox = DirectCast(sender, TextBox)
-        Me.ErrorProvider1.SetError(tb, String.Empty)
-        Me.ParseInputSteamID(tb.Text)
+
+        Dim success As Boolean = Me.ParseInputSteamID(tb.Text)
+        If success Then
+            Me.ErrorProvider1.SetError(tb, String.Empty)
+        End If
     End Sub
 
     ''' <summary>
@@ -138,6 +155,7 @@ Public NotInheritable Class Form1 : Inherits Form
     ''' <param name="sender">The source of the event.</param>
     ''' <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
     Private Sub Button_TooggleDarkTheme_Click(sender As Object, e As EventArgs) Handles Button_TooggleDarkTheme.Click
+
         My.Settings.UseDarkTheme = Not My.Settings.UseDarkTheme
         My.Settings.Save()
 
@@ -178,6 +196,10 @@ Public NotInheritable Class Form1 : Inherits Form
     Private Sub ComboBox_Preset_SelectedIndexChanged(sender As Object, e As EventArgs) _
     Handles ComboBox_Preset.SelectedIndexChanged
 
+        If Not formLoadCompleted Then
+            Return
+        End If
+
         Dim cb As ComboBox = DirectCast(sender, ComboBox)
         Dim selectedPair As KeyValuePair(Of String, String) = Me.Presets.Item(cb.SelectedIndex)
 
@@ -200,16 +222,77 @@ Public NotInheritable Class Form1 : Inherits Form
 #Region " Private Methods "
 
     ''' <summary>
-    ''' Parses the input value.
+    ''' Parses a user-provided Steam ID value in decimal or hexadecimal format,
+    ''' determines whether it represents a 32-bit or 64-bit Steam ID, and updates
+    ''' the corresponding UI textboxes with both decimal and hexadecimal forms.
     ''' </summary>
     ''' 
-    ''' <param name="value">The value.</param>
-    Private Sub ParseInputSteamID(value As String)
+    ''' <param name="value">
+    ''' The input string containing the Steam ID to parse.
+    ''' The value may be:
+    ''' <list type="bullet">
+    ''' <item>
+    ''' <description>A decimal SteamID32 value.</description>
+    ''' </item>
+    ''' <item>
+    ''' <description>A decimal SteamID64 value.</description>
+    ''' </item>
+    ''' <item>
+    ''' <description>A hexadecimal value prefixed with "0x".</description>
+    ''' </item>
+    ''' <item>
+    ''' <description>An empty or whitespace string, which clears all output fields.</description>
+    ''' </item>
+    ''' </list>
+    ''' </param>
+    ''' 
+    ''' <returns>
+    ''' <c>True</c> if the value was successfully parsed or the input was empty;
+    ''' otherwise, <c>False</c> if the input format was invalid or conversion failed.
+    ''' </returns>
+    ''' 
+    ''' <remarks>
+    ''' <para>
+    ''' If the input value is empty or consists only of whitespace, all related
+    ''' output textboxes are cleared and the method returns <c>True</c>.
+    ''' </para>
+    ''' <para>
+    ''' If the value starts with the prefix <c>"0x"</c>, it is interpreted as a
+    ''' hexadecimal number; otherwise, it is parsed as a decimal number.
+    ''' </para>
+    ''' <para>
+    ''' The method automatically determines whether the parsed value represents
+    ''' a SteamID32 or SteamID64 based on its numeric range.
+    ''' </para>
+    ''' <para>
+    ''' On successful parsing, the following UI fields are updated:
+    ''' <list type="bullet">
+    ''' <item>
+    ''' <description>SteamID32 (decimal)</description>
+    ''' </item>
+    ''' <item>
+    ''' <description>SteamID64 (decimal)</description>
+    ''' </item>
+    ''' <item>
+    ''' <description>SteamID32 (hexadecimal)</description>
+    ''' </item>
+    ''' <item>
+    ''' <description>SteamID64 (hexadecimal)</description>
+    ''' </item>
+    ''' </list>
+    ''' </para>
+    ''' <para>
+    ''' If parsing or conversion fails, an error message is displayed using
+    ''' <see cref="ErrorProvider"/>, all output fields are cleared, and
+    ''' the method returns <c>False</c>.
+    ''' </para>
+    ''' </remarks>
+    Private Function ParseInputSteamID(value As String) As Boolean
 
-        value = value.Trim()
+        value = value?.Trim()
         If String.IsNullOrEmpty(value) Then
             Me.ClearTextboxes()
-            Exit Sub
+            Return True
         End If
 
         Dim steamId32Dec As UInteger
@@ -229,6 +312,7 @@ Public NotInheritable Class Form1 : Inherits Form
         If Not numericParseResult OrElse numericValue = 0 Then
             Me.ErrorProvider1.SetError(Me.TextBox_CustomID, "Invalid Steam ID format.")
             Me.ClearTextboxes()
+            Return False
 
         Else
             Dim isSteam32IdLength As Boolean = numericValue < UInteger.MaxValue
@@ -248,12 +332,14 @@ Public NotInheritable Class Form1 : Inherits Form
             Catch ex As Exception
                 Me.ErrorProvider1.SetError(Me.TextBox_CustomID, "Invalid Steam ID format.")
                 Me.ClearTextboxes()
+                Return False
 
             End Try
 
         End If
 
-    End Sub
+        Return True
+    End Function
 
     ''' <summary>
     ''' Clears the Steam ID textboxes.
@@ -296,11 +382,16 @@ Public NotInheritable Class Form1 : Inherits Form
 
             Me.LinkLabel_GitHub.LinkColor = linkLabelForeColor
 
-            Me.Button_TooggleDarkTheme.BackColor = Me.BackColor
+            Me.Button_TooggleDarkTheme.BackColor = Color.Transparent
             Me.Button_TooggleDarkTheme.FlatStyle = FlatStyle.Flat
             Me.Button_TooggleDarkTheme.FlatAppearance.BorderSize = 1
-            Me.Button_TooggleDarkTheme.FlatAppearance.BorderColor = Me.BackColor
-            Me.Button_TooggleDarkTheme.FlatAppearance.MouseOverBackColor = SystemColors.ControlDarkDark
+            Me.Button_TooggleDarkTheme.FlatAppearance.BorderColor = SystemColors.ControlDarkDark
+            Me.Button_TooggleDarkTheme.FlatAppearance.MouseOverBackColor = SystemColors.ControlDark
+            ' Toogling button visibility forces proper border color update.
+            If Me.formLoadCompleted Then
+                Me.Button_TooggleDarkTheme.Visible = False
+                Me.Button_TooggleDarkTheme.Visible = True
+            End If
 
             For Each tb As TextBox In {
                 Me.TextBox_CustomID,
@@ -336,10 +427,10 @@ Public NotInheritable Class Form1 : Inherits Form
 
             Me.LinkLabel_GitHub.LinkColor = Color.FromArgb(255, 0, 0, 255)
 
-            Me.Button_TooggleDarkTheme.BackColor = Me.BackColor
+            Me.Button_TooggleDarkTheme.BackColor = Button.DefaultBackColor
             Me.Button_TooggleDarkTheme.FlatStyle = FlatStyle.Flat
             Me.Button_TooggleDarkTheme.FlatAppearance.BorderSize = 1
-            Me.Button_TooggleDarkTheme.FlatAppearance.BorderColor = Me.BackColor
+            Me.Button_TooggleDarkTheme.FlatAppearance.BorderColor = Button.DefaultBackColor
             Me.Button_TooggleDarkTheme.FlatAppearance.MouseOverBackColor = SystemColors.ControlDarkDark
 
             For Each tb As TextBox In {
