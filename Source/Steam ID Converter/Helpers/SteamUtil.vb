@@ -1,6 +1,6 @@
 ﻿' ***********************************************************************
 ' Author   : ElektroStudios
-' Modified : 08-April-2026
+' Modified : 07-November-2026
 ' ***********************************************************************
 
 #Region " Option Statements "
@@ -45,6 +45,24 @@ Namespace SteamIDConverter.Helpers
 
 #End Region
 
+#Region " Constants "
+
+        ''' <summary>
+        ''' The SteamID64 value that corresponds to the SteamID32 (account number) zero 
+        ''' for an individual account in the public universe (<c>0x0110000100000000</c>).
+        ''' <para></para>
+        ''' Any SteamID64 of an individual account is the sum of this value and its SteamID32 (account number).
+        ''' </summary>
+        Public Const SteamID64Base As ULong = 76561197960265728UL
+
+        ''' <summary>
+        ''' The highest SteamID64 value that can be converted to a SteamID32 (account number);
+        ''' it is the sum of <see cref="SteamUtil.SteamID64Base"/> and <see cref="UInteger.MaxValue"/>.
+        ''' </summary>
+        Public Const MaxSteamID64 As ULong = SteamUtil.SteamID64Base + UInteger.MaxValue
+
+#End Region
+
 #Region " Public Methods "
 
         ''' <summary>
@@ -76,11 +94,20 @@ Namespace SteamIDConverter.Helpers
         ''' <para></para>
         ''' For more information about Steam IDs, visit: <see href="https://developer.valvesoftware.com/wiki/SteamID"/>
         ''' </remarks>
+        ''' 
+        ''' <exception cref="ArgumentOutOfRangeException">
+        ''' Thrown when <paramref name="steamID64"/> is lower than <see cref="SteamUtil.SteamID64Base"/> 
+        ''' or greater than <see cref="SteamUtil.MaxSteamID64"/>.
+        ''' </exception>
         <DebuggerStepThrough>
         Public Shared Function ConvertSteamID64ToSteamID32(steamID64 As ULong) As UInteger
 
-            Const value As Long = 76561197960265728L
-            Return CUInt(steamID64 - value)
+            If steamID64 < SteamUtil.SteamID64Base OrElse steamID64 > SteamUtil.MaxSteamID64 Then
+                Throw New ArgumentOutOfRangeException(NameOf(steamID64), steamID64,
+                    $"The SteamID64 value must be in range {SteamUtil.SteamID64Base} to {SteamUtil.MaxSteamID64}.")
+            End If
+
+            Return CUInt(steamID64 - SteamUtil.SteamID64Base)
         End Function
 
         ''' <summary>
@@ -115,8 +142,7 @@ Namespace SteamIDConverter.Helpers
         <DebuggerStepThrough>
         Public Shared Function ConvertSteamID32ToSteamID64(steamID32 As UInteger) As ULong
 
-            Const value As ULong = 76561197960265728UL
-            Return value + steamID32
+            Return SteamUtil.SteamID64Base + steamID32
         End Function
 
 #End Region

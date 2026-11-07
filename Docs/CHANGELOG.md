@@ -1,6 +1,15 @@
-# Steam ID Converter Change Log 📋
+﻿# Steam ID Converter Change Log 📋
 
-## v1.3.2 *(current)* 🆕
+## v1.3.3 *(current)* 🆕
+#### 🛠️ Fixes:
+- The highest possible SteamID32 value (`4294967295` / `0xFFFFFFFF`) was rejected as an invalid Steam ID, although its SteamID64 equivalent (`76561202255233023`) was accepted and converted to that same value.
+- A SteamID64 that corresponds to the account number zero (`76561197960265728` / `0x110000100000000`) was accepted and displayed a SteamID32 of `0`, while entering `0` directly was rejected. Both are now consistently treated as invalid.
+
+#### 🌟 Improvements:
+- **Source-code:** The Steam ID parsing and preset loading logic has been moved out of the main form into reusable helper classes.
+- **Source-code:** Added a unit test project (MSTest) covering Steam ID conversion, input parsing, preset parsing and the settings provider.
+
+## v1.3.2 🔄
 #### 🌟 Improvements:
 - Hopefully fixed any remaining visual glitches related to control border rendering when the visual theme is set to dark.
 

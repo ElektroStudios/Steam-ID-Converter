@@ -1,6 +1,6 @@
 ﻿' ***********************************************************************
 ' Author   : ElektroStudios
-' Modified : 13-April-2026
+' Modified : 07-November-2026
 ' ***********************************************************************
 
 #Region " Option Statements "
@@ -14,7 +14,6 @@ Option Infer Off
 #Region " Imports "
 
 Imports System.ComponentModel
-Imports System.Globalization
 Imports System.Runtime.InteropServices
 
 Imports SteamIDConverter.Helpers
@@ -265,6 +264,9 @@ Public NotInheritable Class Form1 : Inherits Form
     ''' a SteamID32 or SteamID64 based on its numeric range.
     ''' </para>
     ''' <para>
+    ''' The parsing and validation logic is delegated to <see cref="SteamIdParser.TryParse"/>.
+    ''' </para>
+    ''' <para>
     ''' On successful parsing, the following UI fields are updated:
     ''' <list type="bullet">
     ''' <item>
@@ -289,54 +291,22 @@ Public NotInheritable Class Form1 : Inherits Form
     ''' </remarks>
     Private Function ParseInputSteamID(value As String) As Boolean
 
-        value = value?.Trim()
-        If String.IsNullOrEmpty(value) Then
+        If String.IsNullOrWhiteSpace(value) Then
             Me.ClearTextboxes()
             Return True
         End If
 
-        Dim steamId32Dec As UInteger
-        Dim steamId64Dec As ULong
-
-        Dim numericValue As ULong
-        Dim numericParseResult As Boolean
-
-        Dim isHexadecimal As Boolean = value.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
-        If isHexadecimal Then
-            value = value.Substring(2)
-            numericParseResult = ULong.TryParse(value, NumberStyles.HexNumber, CultureInfo.InvariantCulture, numericValue)
-        Else
-            numericParseResult = ULong.TryParse(value, CultureInfo.InvariantCulture, numericValue)
-        End If
-
-        If Not numericParseResult OrElse numericValue = 0 Then
+        Dim result As SteamIdParseResult
+        If Not SteamIdParser.TryParse(value, result) Then
             Me.ErrorProvider1.SetError(Me.TextBox_CustomID, "Invalid Steam ID format.")
             Me.ClearTextboxes()
             Return False
-
-        Else
-            Dim isSteam32IdLength As Boolean = numericValue < UInteger.MaxValue
-            Try
-                If isSteam32IdLength Then
-                    steamId32Dec = CUInt(numericValue)
-                    steamId64Dec = SteamUtil.ConvertSteamID32ToSteamID64(steamId32Dec)
-                Else
-                    steamId32Dec = SteamUtil.ConvertSteamID64ToSteamID32(numericValue)
-                    steamId64Dec = numericValue
-                End If
-                Me.TextBox_SteamId32Dec.Text = CStr(steamId32Dec)
-                Me.TextBox_SteamId64Dec.Text = CStr(steamId64Dec)
-                Me.TextBox_SteamId32Hex.Text = $"0x{steamId32Dec:X}"
-                Me.TextBox_SteamId64Hex.Text = $"0x{steamId64Dec:X}"
-
-            Catch ex As Exception
-                Me.ErrorProvider1.SetError(Me.TextBox_CustomID, "Invalid Steam ID format.")
-                Me.ClearTextboxes()
-                Return False
-
-            End Try
-
         End If
+
+        Me.TextBox_SteamId32Dec.Text = result.SteamID32Decimal
+        Me.TextBox_SteamId64Dec.Text = result.SteamID64Decimal
+        Me.TextBox_SteamId32Hex.Text = result.SteamID32Hexadecimal
+        Me.TextBox_SteamId64Hex.Text = result.SteamID64Hexadecimal
 
         Return True
     End Function
@@ -493,25 +463,13 @@ Public NotInheritable Class Form1 : Inherits Form
 
         Dim storedPresets As Specialized.StringCollection = My.Settings.Presets
 
+        ' A null collection means that no presets are stored, which is a valid state.
         If storedPresets Is Nothing Then
             Return
         End If
 
-        For Each rawLine As String In storedPresets
-
-            If String.IsNullOrEmpty(rawLine) Then
-                Continue For
-            End If
-
-            Dim separatorIndex As Integer = rawLine.IndexOf("|"c)
-            If separatorIndex < 0 Then
-                Continue For
-            End If
-
-            Dim presetName As String = rawLine.Substring(0, separatorIndex)
-            Dim presetValue As String = rawLine.Substring(separatorIndex + 1)
-
-            Me.Presets.Add(New KeyValuePair(Of String, String)(presetName, presetValue))
+        For Each preset As KeyValuePair(Of String, String) In PresetParser.ParsePresetLines(storedPresets.Cast(Of String)())
+            Me.Presets.Add(preset)
         Next
 
     End Sub
